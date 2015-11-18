@@ -43,7 +43,7 @@ public class ImageGridCreator {
 		Color c;
 		for (int i = 0, ipx = 0; i < cantCeldasX; i++, ipx += tamañoCeldapx) {
 			for (int j = 0, jpx = 0; j < cantCeldasY; j++, jpx += tamañoCeldapx) {
-				
+
 				CeldaGrilla celdaActual = celdaGrilla[i][j];
 
 				// Si es formato binario, noi importa el valor del rinde, sólo importa si hay datos o no en la celda
@@ -64,7 +64,7 @@ public class ImageGridCreator {
 					// Por defecto fondo verde si no hay datos!
 					g2.setColor(Color.GREEN);
 				} else {
-					// Por defecto fondo blanco si no hay datos!
+					// Por defecto fondo blanco si hay datos pero es 0!
 					g2.setColor(Color.WHITE);
 				}
 				g2.fillRect(ipx, jpx, tamañoCeldapx, tamañoCeldapx);

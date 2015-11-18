@@ -15,11 +15,15 @@ public class OutputGridProcessor {
 	int cantX;
 	int cantY;
 	double rendMax;
+	String producto;
+	String campaña;
 
-	public OutputGridProcessor(String path, double anchoCelda, boolean formatoBinario) {
+	public OutputGridProcessor(String path, double anchoCelda, boolean formatoBinario, String producto, String campaña) {
 		this.pathFile = path;
 		this.anchoCelda = anchoCelda;
 		this.formatoBinario = formatoBinario;
+		this.producto = producto;
+		this.campaña = campaña;
 	}
 
 	public Integer getMinFila(Set<Integer> filas) {
@@ -41,6 +45,13 @@ public class OutputGridProcessor {
 		// Busco valores min y max de las filas y columnas
 		for (String linea : valores) {
 			String[] datos = datosXLinea(linea);
+
+			//Si no es el producto-campaña que quiero, lo salteo
+			if(producto != null && campaña != null && !datos[0].split(",")[2].toString().equals(producto) && !datos[0].split(",")[3].toString().equals(campaña))
+			{
+				continue;
+			}
+
 			int col = Integer.valueOf(datos[0].split(",")[1]);
 			int fila = Integer.valueOf(datos[0].split(",")[0]);
 			// paso fila a positivo
@@ -49,9 +60,12 @@ public class OutputGridProcessor {
 				double rend = Double.valueOf(datos[1]);
 				rendimientos.add(rend);
 			}
+
 			filas.add(fila);
 			columnas.add(col);
 		}
+		System.out.println("filas: "+filas.size());
+		System.out.println("columnas: "+columnas.size());
 
 		//Si sólo importa el formato binario, masrend = 1 (no debe ser cero, en otro paso divido por esto!)
 		this.rendMax = formatoBinario ? 1 : Collections.max(rendimientos);
@@ -83,6 +97,13 @@ public class OutputGridProcessor {
 		// <0,0>
 		for (String linea : valores) {
 			String[] datos = datosXLinea(linea);
+
+			//Si no es el producto-campaña que quiero, lo salteo
+			if(producto != null && campaña != null && !datos[0].split(",")[2].toString().equals(producto) && !datos[0].split(",")[3].toString().equals(campaña))
+			{
+				continue;
+			}
+
 			int col = Integer.valueOf(datos[0].split(",")[1]) - minCol;
 			// paso fila a positivo
 			int fila = Integer.valueOf(datos[0].split(",")[0])*-1 - minFila;
@@ -105,13 +126,13 @@ public class OutputGridProcessor {
 	 *  pos 0 tiene un string separados por "," (es la key)
 	 *  pos 1 tiene el rinde (value)
 	 * @param linea
-	 * @return [(campaña,producto,columna,fila),rinde]
+	 * @return [(fila,columna,producto,campaña),rinde]
 	 */
 	private String[] datosXLinea(String linea) {
 		String[] key = linea.split("\t")[0].split(",");
 		String rinde = linea.split("\t")[1].split(",")[0];
-		Integer columna = Integer.valueOf(key[2]);
-		Integer fila = Integer.valueOf(key[3]);
+		Integer columna = Integer.valueOf(key[3]);
+		Integer fila = Integer.valueOf(key[2]);
 		String producto = key[1];
 		String campaña = key[0];
 		return new String[] { fila.toString()+ "," + columna.toString() + "," + producto + "," + campaña + ",", rinde };
